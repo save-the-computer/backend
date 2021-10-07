@@ -1,0 +1,20 @@
+version: "3"
+services:
+  django:
+    build: .
+    volumes:
+      - ./:/app/
+    environment:
+      - DJANGO_DEBUG=True
+    
+  celery-worker:
+    volumes:
+      - ./:/app/
+    environment:
+      - DJANGO_DEBUG=True
+  
+  celery-beat:
+    volumes:
+      - ./:/app/
+    environment:
+      - DJANGO_DEBUG=True
