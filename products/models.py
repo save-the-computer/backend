@@ -29,4 +29,4 @@ class Product(models.Model):
 
 
 class WritePointQueuedProduct(models.Model):
-    id = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, primary_key=True)
+    id = models.OneToOneField(Product, on_delete=models.CASCADE, null=False, primary_key=True)
