@@ -10,6 +10,7 @@ ADD ./requirements.txt /app/
 RUN pip install -r requirements.txt
 
 ADD ./save_the_computer /app/save_the_computer/
+ADD ./products /app/products/
 ADD ./manage.py /app/
 
 ENV PYTHONUNBUFFERED=0
