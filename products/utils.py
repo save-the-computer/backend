@@ -3,7 +3,7 @@ import time
 
 
 class Pseudo:
-    def sleep(min_seconds: int):
+    def sleep(self, min_seconds: int):
         weight = 2.5
         bias = random.random() * min_seconds * weight
         time.sleep(min_seconds + bias)
