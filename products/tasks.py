@@ -28,6 +28,8 @@ def collect_products(collector_name: str, page_limit: int):
         # Throttle each request for 20 seconds
         pseudo.sleep(20)
 
+    print(f'{collector_name} collects {len(raw_product_specs)} product specs.')
+
     # array for batch create or update
     batch_create_product_specs = []
     batch_update_product_specs = []
@@ -95,6 +97,11 @@ def collect_products(collector_name: str, page_limit: int):
     ProductSpec.objects.bulk_update(batch_update_product_specs, fields=['name', 'registration_date', 'category'])
     Product.objects.bulk_create(batch_create_products)
     Product.objects.bulk_update(batch_update_products, fields=['variant', 'price', 'stock_state', 'product_spec'])
+
+    print(f'{len(batch_create_product_specs)} of product specs created.')
+    print(f'{len(batch_update_product_specs)} of product specs updated.')
+    print(f'{len(batch_create_products)} of products created.')
+    print(f'{len(batch_update_products)} of products updated.')
 
     # Add to queue (will writed on write_points)
     WritePointQueuedProduct.objects.bulk_create([
