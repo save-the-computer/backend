@@ -30,3 +30,8 @@ class Product(models.Model):
 
 class WritePointQueuedProduct(models.Model):
     id = models.OneToOneField(Product, on_delete=models.CASCADE, null=False, primary_key=True)
+
+
+class DownloadThumbnailQueuedProductSpec(models.Model):
+    id = models.OneToOneField(ProductSpec, on_delete=models.CASCADE, null=False, primary_key=True)
+    thumbnail_url = models.URLField()

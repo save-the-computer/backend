@@ -1,9 +1,12 @@
 from celery import chain
 from celery.app import shared_task
+import requests
 from influxdb_client.client.write.point import Point
 from stcomputer_collector.collectors import get_collector
-from .models import ProductCategory, Product, ProductSpec, WritePointQueuedProduct
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 from django.conf import settings
+from .models import DownloadThumbnailQueuedProductSpec, ProductCategory, Product, ProductSpec, WritePointQueuedProduct
 from .influxdb import influxdb, bucket
 from .utils import pseudo
 
@@ -35,18 +38,22 @@ def collect_products(collector_name: str, page_limit: int):
     batch_update_product_specs = []
     batch_create_products = []
     batch_update_products = []
+    batch_create_dtq_product_specs = []
 
-    # Get all product specs
+    # Get all ProductSpec
     product_spec_ids = [*map(lambda product_spec: product_spec.id, raw_product_specs)]
     product_specs_by_id = ProductSpec.objects.in_bulk(product_spec_ids)
 
-    # Get all products        
+    # Get all Product     
     product_ids = []
     for raw_product_spec in raw_product_specs:
         for raw_product in raw_product_spec.products:
             product_ids.append(raw_product.id)
 
     product_by_id = Product.objects.in_bulk(product_ids)
+
+    # Get all DownloadThumbnailQueuedProduct
+    dtq_product_spec_ids = set(map(lambda dtq_product_spec: dtq_product_spec.id, DownloadThumbnailQueuedProductSpec.objects.in_bulk(product_spec_ids)))
 
     # Iterate products
     for raw_product_spec in raw_product_specs:
@@ -73,6 +80,16 @@ def collect_products(collector_name: str, page_limit: int):
             product_spec.category = product_category
             batch_update_product_specs.append(product_spec)
 
+        # 1) if thumbnail image is null, add to DownloadThumbnailQueuedProduct
+        # 2) check already download queued
+        if not product_spec.thumbnail and product_spec.id not in dtq_product_spec_ids:
+            # add to dtq_products
+            batch_create_dtq_product_specs.append(DownloadThumbnailQueuedProductSpec(
+                id=product_spec,
+                thumbnail_url=raw_product_spec.thumbnail,
+            ))
+
+        # iterate products under product specs
         for raw_product in raw_product_spec.products:
             product = product_by_id.get(raw_product.id, None)
             
@@ -104,9 +121,18 @@ def collect_products(collector_name: str, page_limit: int):
     print(f'{len(batch_update_products)} of products updated.')
 
     # Add to queue (will writed on write_points)
-    WritePointQueuedProduct.objects.bulk_create([
-        WritePointQueuedProduct(id=product) for product in batch_create_products + batch_update_products
-    ], ignore_conflicts=True)
+    WritePointQueuedProduct.objects.bulk_create(
+        [WritePointQueuedProduct(id=product) for product in batch_create_products + batch_update_products],
+        ignore_conflicts=True
+    )
+
+    # Add to queue (will download thumbnail on download_one_thumbnail)
+    DownloadThumbnailQueuedProductSpec.objects.bulk_create(
+        batch_create_dtq_product_specs,
+        ignore_conflicts=True
+    )
+
+    print(f'{len(batch_create_dtq_product_specs)} of thumbnails download queued')
 
     # Throttle
     pseudo.sleep(20)
@@ -139,3 +165,31 @@ def write_points():
     
     WritePointQueuedProduct.objects.all().delete()
     print(f'{count} of points writed')
+
+
+@shared_task
+def download_one_thumbnail():
+    """
+    다운로드 대기중인 썸네일 중 하나를 다운로드한다.
+    """
+    dtq_product_spec = DownloadThumbnailQueuedProductSpec.objects.order_by('-id').first()
+
+    if dtq_product_spec is None:
+        print(f'Nothing to download, terminate.')
+        return
+
+    temp_file = NamedTemporaryFile(delete=True)
+
+    session = requests.Session()
+    session.headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15',
+    }
+    response = session.get(dtq_product_spec.thumbnail_url)
+    temp_file.write(response.content)
+    temp_file.flush()
+
+    dtq_product_spec.id.thumbnail.save(
+        f'{dtq_product_spec.id.id}',
+        File(temp_file)
+    )
+    dtq_product_spec.delete()
