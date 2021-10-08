@@ -1,6 +1,6 @@
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import ASYNCHRONOUS
-from save_the_computer import settings
+from django.conf import settings
 
 
 bucket = settings.INFLUXDB_BUCKET

@@ -2,8 +2,8 @@ from celery import chain
 from celery.app import shared_task
 from influxdb_client.client.write.point import Point
 from stcomputer_collector.collectors import get_collector
-from save_the_computer import settings
 from .models import ProductCategory, Product, ProductSpec, WritePointQueuedProduct
+from django.conf import settings
 from .influxdb import influxdb, bucket
 from .utils import pseudo
 
