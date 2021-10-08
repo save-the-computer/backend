@@ -134,6 +134,13 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# Django REST framework: Pagination
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
+}
+
+
 # Celery Configuration Options
 # https://docs.celeryproject.org/en/stable/django/first-steps-with-django.html
 CELERY_BROKER_URL = 'pyamqp://{user}:{password}@{host}//'.format(
