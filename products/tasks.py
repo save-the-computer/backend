@@ -5,6 +5,7 @@ from stcomputer_collector.collectors import get_collector
 from save_the_computer import settings
 from .models import ProductCategory, Product, ProductSpec, WritePointQueuedProduct
 from .influxdb import influxdb, bucket
+from .utils import pseudo
 
 
 @shared_task
@@ -24,7 +25,8 @@ def collect_products(collector_name: str, page_limit: int):
     for batch_raw_product_specs in get_collector(collector_name).collect(page_limit):
         raw_product_specs += batch_raw_product_specs
 
-    print(f'{collector_name} outputs {len(raw_product_specs)}')
+        # Throttle each request for 20 seconds
+        pseudo.sleep(20)
 
     # array for batch create or update
     batch_create_product_specs = []
@@ -98,6 +100,10 @@ def collect_products(collector_name: str, page_limit: int):
     WritePointQueuedProduct.objects.bulk_create([
         WritePointQueuedProduct(id=product) for product in batch_create_products + batch_update_products
     ], ignore_conflicts=True)
+
+    # Throttle
+    pseudo.sleep(20)
+
 
 
 @shared_task
