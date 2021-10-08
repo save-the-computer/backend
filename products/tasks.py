@@ -2,24 +2,9 @@ from celery import chain
 from celery.app import shared_task
 from influxdb_client.client.write.point import Point
 from stcomputer_collector.collectors import get_collector
-from stcomputer_collector.provider.base.collector import Collector
 from save_the_computer import settings
 from .models import ProductCategory, Product, ProductSpec, WritePointQueuedProduct
 from .influxdb import influxdb, bucket
-
-
-@shared_task
-def add(x, y):
-    print(f'Celery processing: {x} + {y}')
-    return x + y
-
-
-@shared_task
-def mul(x, y):
-    result = add.delay(x, y)
-    print(f'Celery ADD:', result.get())
-    print(f'Celery processing: {x} * {y}')
-    return x * y
 
 
 @shared_task
