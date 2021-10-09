@@ -53,7 +53,7 @@ def collect_products(collector_name: str, page_limit: int):
     product_by_id = Product.objects.in_bulk(product_ids)
 
     # Get all DownloadThumbnailQueuedProduct
-    dtq_product_spec_ids = set(map(lambda dtq_product_spec: dtq_product_spec.id, DownloadThumbnailQueuedProductSpec.objects.in_bulk(product_spec_ids)))
+    dtq_product_specs_by_id = DownloadThumbnailQueuedProductSpec.objects.in_bulk(product_spec_ids)
 
     # Iterate products
     for raw_product_spec in raw_product_specs:
@@ -82,7 +82,7 @@ def collect_products(collector_name: str, page_limit: int):
 
         # 1) if thumbnail image is null, add to DownloadThumbnailQueuedProduct
         # 2) check already download queued
-        if not product_spec.thumbnail and product_spec.id not in dtq_product_spec_ids:
+        if not product_spec.thumbnail and product_spec.id not in dtq_product_specs_by_id:
             # add to dtq_products
             batch_create_dtq_product_specs.append(DownloadThumbnailQueuedProductSpec(
                 id=product_spec,
