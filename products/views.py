@@ -1,7 +1,11 @@
-from django.shortcuts import render
 from rest_framework import viewsets
-from products.models import Product, ProductCategory, ProductSpec
-from products.serializers import ProductCategorySerializer, ProductSerializer, ProductSpecSerializer
+from rest_framework.response import Response
+from rest_framework.exceptions import NotFound, NotAcceptable
+
+from products.utils import serialize_flux_table
+from .influxdb import influxdb, bucket
+from .models import Product, ProductCategory, ProductSpec
+from .serializers import ProductCategorySerializer, ProductSerializer, ProductSpecSerializer
 
 
 class ProductCategoryViewSet(viewsets.ReadOnlyModelViewSet):
