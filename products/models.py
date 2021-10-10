@@ -24,7 +24,7 @@ class Product(models.Model):
     variant = models.CharField(max_length=200)
     price = models.IntegerField(null=True)
     stock_state = models.CharField(max_length=30)
-    product_spec = models.ForeignKey(ProductSpec, on_delete=models.CASCADE, null=False)
+    product_spec = models.ForeignKey(ProductSpec, on_delete=models.CASCADE, related_name='products', null=False)
     updated_at = models.DateTimeField(auto_now=True)
 
 
