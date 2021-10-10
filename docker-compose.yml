@@ -3,8 +3,6 @@ services:
   mariadb:
     image: mariadb
     restart: unless-stopped
-    ports:
-      - 3306:3306
     volumes:
       - ./mariadb:/var/lib/mysql
     environment:
@@ -16,8 +14,6 @@ services:
   influxdb:
     image: influxdb:2.0
     restart: unless-stopped
-    ports:
-      - 8086:8086
     volumes:
       - ./influxdb:/var/lib/influxdb2
     environment:
@@ -31,9 +27,6 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     restart: unless-stopped
-    ports:
-      - 5672:5672
-      - 15672:15672
     volumes:
       - ./rabbitmq:/var/lib/rabbitmq
     environment:

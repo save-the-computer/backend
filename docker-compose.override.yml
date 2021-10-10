@@ -1,18 +1,31 @@
 version: "3"
 services:
+  mariadb:
+    ports:
+      - 3306:3306
+
+  influxdb:
+    ports:
+      - 8086:8086 # also available web admin
+
+  rabbitmq:
+    ports:
+      - 5672:5672
+      - 15672:15672 # rabbitmq web admin
+
   django:
     build: .
     volumes:
       - ./:/app/
     environment:
       - DJANGO_DEBUG=True
-    
+
   celery-worker:
     volumes:
       - ./:/app/
     environment:
       - DJANGO_DEBUG=True
-  
+
   celery-beat:
     volumes:
       - ./:/app/
