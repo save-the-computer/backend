@@ -7,4 +7,4 @@ pillow==8.2.0
 celery==5.1.2
 django-celery-results==2.2.0
 influxdb-client==1.21.0
-git+git://github.com/save-the-computer/collector@0.1.1
+git+git://github.com/save-the-computer/collector
