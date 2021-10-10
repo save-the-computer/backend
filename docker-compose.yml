@@ -34,7 +34,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
 
   django:
-    image: solo5star/stcomputer-backend:0.1.1
+    image: solo5star/stcomputer-backend:0.1.2
     restart: unless-stopped
     ports:
       - 8000:8000
@@ -58,7 +58,7 @@ services:
       - RABBITMQ_PORT=5672
 
   celery-worker:
-    image: solo5star/stcomputer-backend:0.1.1
+    image: solo5star/stcomputer-backend:0.1.2
     restart: unless-stopped
     volumes:
       - ./media:/media
@@ -75,7 +75,7 @@ services:
       - RABBITMQ_PORT=5672
 
   celery-beat:
-    image: solo5star/stcomputer-backend:0.1.1
+    image: solo5star/stcomputer-backend:0.1.2
     restart: unless-stopped
     volumes:
       - ./media:/media
