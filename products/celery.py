@@ -25,4 +25,8 @@ app.conf.beat_schedule = {
         'task': 'products.tasks.collect',
         'schedule': crontab(hour=5, minute=0),
     },
+    'Download One Thumbnail': {
+        'task': 'products.tasks.download_one_thumbnail',
+        'schedule': 60 * 5, # every 5 minutes
+    }
 }
