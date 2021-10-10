@@ -22,8 +22,16 @@ class ProductCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ProductSpecViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ProductSpec.objects.all()
     serializer_class = ProductSpecSerializer
+
+    def get_queryset(self):
+        query = {}
+        for key in ['category_name', 'category_level1', 'category_level2']:
+            if (value := self.request.query_params.get(key)) is not None:
+                # category__name, category__level1, category__level2
+                query[key.replace('_', '__')] = value
+        
+        return ProductSpec.objects.filter(**query)
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
