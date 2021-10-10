@@ -12,7 +12,7 @@ services:
       - MARIADB_USER=${MARIADB_USER}
       - MARIADB_PASSWORD=${MARIADB_PASSWORD}
       - MARIADB_DATABASE=${MARIADB_DATABASE}
-  
+
   influxdb:
     image: influxdb:2.0
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
 
   django:
-    image: solo5star/stcomputer-backend:0.1.0
+    image: solo5star/stcomputer-backend:0.1.1
     restart: unless-stopped
     ports:
       - 8000:8000
@@ -65,7 +65,7 @@ services:
       - RABBITMQ_PORT=5672
 
   celery-worker:
-    image: solo5star/stcomputer-backend:0.1.0
+    image: solo5star/stcomputer-backend:0.1.1
     restart: unless-stopped
     volumes:
       - ./media:/media
@@ -82,7 +82,7 @@ services:
       - RABBITMQ_PORT=5672
 
   celery-beat:
-    image: solo5star/stcomputer-backend:0.1.0
+    image: solo5star/stcomputer-backend:0.1.1
     restart: unless-stopped
     volumes:
       - ./media:/media
