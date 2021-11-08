@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # library apps
+    'corsheaders',
     'rest_framework',
     'django_celery_results',
 
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 ROOT_URLCONF = 'save_the_computer.urls'
 TEMPLATES = [
@@ -81,6 +83,8 @@ TEMPLATES = [
     },
 ]
 WSGI_APPLICATION = 'save_the_computer.wsgi.application'
+CORS_ORIGIN_WHITELIST = []
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Database
