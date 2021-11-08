@@ -31,7 +31,7 @@ class ProductSpecViewSet(viewsets.ReadOnlyModelViewSet):
                 # category__name, category__level1, category__level2
                 query[key.replace('_', '__')] = value
         
-        return ProductSpec.objects.filter(**query)
+        return ProductSpec.objects.filter(**query).order_by('-id')
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
