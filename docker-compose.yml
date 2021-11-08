@@ -40,15 +40,12 @@ services:
       - 8000:8000
     volumes:
       - ./media:/media
-    command:
-      - bash
-      - -c
-      - |
-        /wait-for-it.sh mariadb:3306 -t 10
-        python manage.py runserver 0.0.0.0:8000
+    command: /entrypoints/django.sh
     env_file:
       - .env
     environment:
+      #- DJANGO_BIND_ADDRESS=0.0.0.0
+      - DJANGO_PORT=8000
       - DJANGO_MEDIA_ROOT=/media/
       - MARIADB_HOST=mariadb
       - MARIADB_PORT=3306
@@ -62,7 +59,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./media:/media
-    command: 'celery -A products worker --loglevel=info'
+    command: /entrypoints/celery-worker.sh
     env_file:
       - .env
     environment:
@@ -79,7 +76,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./media:/media
-    command: 'celery -A products beat --loglevel=info'
+    command: /entrypoints/celery-beat.sh
     env_file:
       - .env
     environment:
