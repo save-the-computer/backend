@@ -20,7 +20,8 @@ def collect():
     tasks_chain()
 
 
-@shared_task
+# Automatic retry for all Exception, 60 seconds of delay, 10 times of max retries
+@shared_task(autoretry_for=(Exception,), default_retry_delay=60, retry_kwargs={'max_retries': 10})
 def collect_products(collector_name: str, page_limit: int):
     raw_product_specs = []
 
@@ -138,8 +139,8 @@ def collect_products(collector_name: str, page_limit: int):
     pseudo.sleep(20)
 
 
-
-@shared_task
+# Automatic retry for all Exception, 60 seconds of delay, 10 times of max retries
+@shared_task(autoretry_for=(Exception,), default_retry_delay=60, retry_kwargs={'max_retries': 10})
 def write_points():
     """
     InfluxDB에 가격 데이터를 기록하는 task.
