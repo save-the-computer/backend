@@ -64,6 +64,8 @@ services:
       - .env
     environment:
       - DJANGO_MEDIA_ROOT=/media/
+      - DJANGO_HOST=django
+      - DJANGO_PORT=8000
       - MARIADB_HOST=mariadb
       - MARIADB_PORT=3306
       - INFLUXDB_HOST=influxdb
@@ -81,6 +83,8 @@ services:
       - .env
     environment:
       - DJANGO_MEDIA_ROOT=/media/
+      - DJANGO_HOST=django
+      - DJANGO_PORT=8000
       - MARIADB_HOST=mariadb
       - MARIADB_PORT=3306
       - INFLUXDB_HOST=influxdb
