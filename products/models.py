@@ -21,7 +21,7 @@ class ProductSpec(models.Model):
 
 class Product(models.Model):
     id = models.CharField(max_length=30, primary_key=True)
-    variant = models.CharField(max_length=200)
+    variant = models.CharField(max_length=200, null=True)
     price = models.IntegerField(null=True)
     stock_state = models.CharField(max_length=30)
     product_spec = models.ForeignKey(ProductSpec, on_delete=models.CASCADE, related_name='products', null=False)
