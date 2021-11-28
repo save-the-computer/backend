@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from products.models import Product, ProductCategory, ProductSpec
+from django_celery_results.models import TaskResult
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
@@ -26,3 +27,9 @@ class ProductSpecSerializer(serializers.ModelSerializer):
     
     def get_field_names(self, declared_fields, info):
         return super(ProductSpecSerializer, self).get_field_names(declared_fields, info) + self.Meta.extra_fields
+
+
+class TaskResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskResult
+        fields = '__all__'

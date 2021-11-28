@@ -1,3 +1,4 @@
+from django_celery_results.models import TaskResult
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, NotAcceptable
@@ -5,7 +6,7 @@ from rest_framework.exceptions import NotFound, NotAcceptable
 from products.utils import serialize_flux_table
 from .influxdb import influxdb, bucket
 from .models import Product, ProductCategory, ProductSpec
-from .serializers import ProductCategorySerializer, ProductSerializer, ProductSpecSerializer
+from .serializers import ProductCategorySerializer, ProductSerializer, ProductSpecSerializer, TaskResultSerializer
 
 
 class ProductCategoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,7 +32,7 @@ class ProductSpecViewSet(viewsets.ReadOnlyModelViewSet):
             if (value := self.request.query_params.get(key)) is not None:
                 # category__name, category__level1, category__level2
                 query[key.replace('_', '__')] = value
-        
+
         queryset = ProductSpec.objects.filter(**query)
 
         # Filtering by product name
@@ -81,3 +82,8 @@ class ProductPriceSeries(viewsets.ViewSet):
             raise NotFound()
 
         return Response(serialize_flux_table(result))
+
+
+class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = TaskResult.objects.all()
+    serializer_class = TaskResultSerializer
