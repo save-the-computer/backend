@@ -25,13 +25,22 @@ class ProductSpecViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSpecSerializer
 
     def get_queryset(self):
+        # Get products by category
         query = {}
         for key in ['category_name', 'category_level1', 'category_level2']:
             if (value := self.request.query_params.get(key)) is not None:
                 # category__name, category__level1, category__level2
                 query[key.replace('_', '__')] = value
         
-        return ProductSpec.objects.filter(**query).order_by('-id')
+        queryset = ProductSpec.objects.filter(**query)
+
+        # Filtering by product name
+        search = self.request.query_params.get('search')
+        if search is not None and len(search) > 0:
+            queryset = queryset.filter(name__icontains=search)
+
+        # sort products as registration date
+        return queryset.order_by('-registration_date')
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
