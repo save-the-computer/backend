@@ -23,7 +23,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'Collect': {
         'task': 'products.tasks.collect',
-        'schedule': crontab(hour=5, minute=0),
+        'schedule': crontab(hour='5,17', minute=0),
     },
     'Download One Thumbnail': {
         'task': 'products.tasks.download_one_thumbnail',
