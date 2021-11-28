@@ -95,3 +95,6 @@ db.sqlite3
 
 # ignore media directory
 /media
+
+# ignore celerybeat schedule related file
+/celerybeat-schedule
